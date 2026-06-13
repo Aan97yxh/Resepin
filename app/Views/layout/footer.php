@@ -1,4 +1,4 @@
-    <script>
+<script>
         const CACHE_PREFIX  = 'resepin_';
         const CACHE_TTL     = 60 * 60 * 1000; // 1 jam
 
@@ -136,7 +136,8 @@
             showSkeletonLoaders();
 
             try {
-                const url      = `<?= base_url('api/recipes/search') ?>?query=${encodeURIComponent(lastQuery)}&diet=${activeDiets.join(',')}&intolerances=${activeAllergies.join(',')}&offset=${currentOffset}`;
+                // PERBAIKAN: URL Fetch diubah menuju endpoint baru sesuai laporan kelompok kalian
+                const url      = `<?= base_url('api/recipes/findByIngredients') ?>?query=${encodeURIComponent(lastQuery)}&diet=${activeDiets.join(',')}&intolerances=${activeAllergies.join(',')}&offset=${currentOffset}`;
                 const response = await fetch(url);
                 const data     = await response.json();
 
@@ -229,6 +230,7 @@
             }
         }
 
+        // (Fungsi injectModal, closeModal, window.onclick tetap sama dan dipertahankan)
         function injectModal(recipe) {
             document.getElementById('modalRecipeTitle').innerText     = recipe.title;
             document.getElementById('modalRecipeImage').src           = recipe.image;
@@ -279,7 +281,6 @@
             if (event.target === modal) closeModal();
         };
 
-        // ─── BOOTSTRAP ───────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('searchBtn').addEventListener('click', () => fetchRecipes(false));
             document.getElementById('randomBtn').addEventListener('click', fetchRandomRecipes);

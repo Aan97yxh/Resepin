@@ -14,8 +14,8 @@ class RecipeController extends BaseController
         $this->apiKey = env('SPOONACULAR_API_KEY', '');
     }
 
-    // ─── NUTRI SEARCH ─────────────────────────────────────────────
-    public function search(): ResponseInterface
+    // ─── FIND BY INGREDIENTS (Updated Method Name for Academic Report) ───
+    public function findByIngredients(): ResponseInterface
     {
         $query        = $this->request->getGet('query') ?? '';
         $diet         = $this->request->getGet('diet') ?? '';
@@ -30,8 +30,14 @@ class RecipeController extends BaseController
         ];
 
         if ($query !== '') {
-            $queryParams['query'] = $query;
+            // Smart Detection Logic
+            if (str_contains($query, ',')) {
+                $queryParams['includeIngredients'] = $query;
+            } else {
+                $queryParams['query'] = $query;
+            }
         }
+        
         if ($diet !== '') {
             $queryParams['diet'] = $diet;
         }
@@ -67,7 +73,7 @@ class RecipeController extends BaseController
         return $this->response->setJSON($result);
     }
 
-    // ─── RECIPE DETAIL (untuk modal: nutrition + ingredients + instructions) ──
+    // ─── RECIPE DETAIL ───────────────────────────────────────────
     public function detail(int $id): ResponseInterface
     {
         $url = $this->baseUrl . "/recipes/{$id}/information?" . http_build_query([
@@ -84,7 +90,7 @@ class RecipeController extends BaseController
         return $this->response->setJSON($result);
     }
 
-    // ─── HELPER: HTTP GET ─────────────────────────────────────────
+    // ─── HELPER: HTTP GET (cURL Service) ───────────────────────────
     private function callApi(string $url): mixed
     {
         $ch = curl_init($url);
@@ -92,7 +98,7 @@ class RecipeController extends BaseController
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 10,
             CURLOPT_HTTPHEADER     => ['Accept: application/json'],
-            CURLOPT_SSL_VERIFYPEER => false, // Bypass SSL handshake di localhost agar cURL lancar
+            CURLOPT_SSL_VERIFYPEER => false, 
         ]);
 
         $response = curl_exec($ch);

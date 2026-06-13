@@ -8,6 +8,6 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get('/', 'Home::index');
 
-$routes->get('api/recipes/search',        'RecipeController::search');
-$routes->get('api/recipes/random',        'RecipeController::random');
-$routes->get('api/recipes/detail/(:num)', 'RecipeController::detail/$1');
+$routes->get('api/recipes/findByIngredients', 'RecipeController::findByIngredients');
+$routes->get('api/recipes/random',            'RecipeController::random');
+$routes->get('api/recipes/detail/(:num)',     'RecipeController::detail/$1');
